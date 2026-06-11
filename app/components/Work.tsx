@@ -96,7 +96,7 @@ export default function Work() {
             </div>
           </div>
 
-          {/* BuildQuote.io */}
+          {/* PREPonCall */}
           <div
             data-animate
             data-delay="300"
@@ -109,17 +109,19 @@ export default function Work() {
               </span>
             </div>
             <h3 className="text-2xl md:text-[28px] font-semibold text-[#F5F5F0] mb-4 leading-snug">
-              BuildQuote.io
+              PREPonCall
             </h3>
             <p className="text-[#888880] text-[17px] leading-relaxed mb-8">
-              We built <a href="https://buildquote.io" target="_blank" rel="noopener noreferrer" className="text-[#F5F5F0] hover:text-[#E8402A] transition-colors duration-200 border-b border-white/[0.15] hover:border-[#E8402A]/40">BuildQuote.io</a> from the ground up — a professional
-              quoting platform designed specifically for contractors. From
-              brand identity to full product development, we created a
-              streamlined tool that helps contractors create, manage, and
-              send polished quotes faster.
+              A full platform rebuild and migration for a real estate exam
+              prep company doing nearly seven figures a year. We replaced
+              their WordPress stack with a modern Next.js and Supabase
+              platform, redesigned the course experience, launched a private
+              community for their students and alumni, and built a custom
+              admin dashboard so the founder can run the whole business
+              without touching code.
             </p>
             <div className="flex flex-wrap gap-3">
-              {["Digital Product", "Full-Stack Dev", "SaaS"].map((tag) => (
+              {["Platform Rebuild", "Community", "Admin Dashboard", "Stripe + Subscriptions"].map((tag) => (
                 <span
                   key={tag}
                   className="px-4 py-1.5 rounded-sm border border-white/[0.1] bg-white/[0.04] text-xs text-[#888880] font-medium tracking-wide"

@@ -99,7 +99,7 @@ const services = [
     name: "Brand Design",
     Icon: BrandIcon,
     description:
-      "Your brand is usually the first impression so we make sure it's a good one. We help you build a visual identity that feels right, looks sharp, and actually reflects who you are.",
+      "A brand isn't just a logo. We build identity systems that hold up across a website, a product, a package, and a pitch deck — so your business feels like the same business everywhere people meet it.",
   },
   {
     name: "Marketing",
@@ -111,25 +111,25 @@ const services = [
     name: "Consulting",
     Icon: ConsultingIcon,
     description:
-      "Sometimes you just need someone to look at things with fresh eyes. We dig into what's working and what isn't, then help you figure out the clearest path forward.",
+      "Sometimes you don't need a deliverable, you need a second brain. We sit in on the hard calls — pricing, positioning, what to build next, what to stop doing — and help you make sharper ones.",
   },
   {
-    name: "Workflow Optimization",
+    name: "Platform & Product Builds",
     Icon: WorkflowIcon,
     description:
-      "If your team is spending more time managing the process than doing the work, something\u2019s off. We come in, find where things are getting stuck, and help you build something that actually\u00a0flows.",
+      "Full custom software, end to end. We design and build modern web platforms \u2014 courses, subscriptions, member apps, SaaS \u2014 on a stack (Next.js, Supabase, Stripe) that grows with your business instead of capping it.",
   },
   {
-    name: "Community Management",
+    name: "Community Platforms",
     Icon: CommunityIcon,
     description:
-      "A great community doesn't just happen. It gets nurtured. We help brands build, engage, and grow communities that people actually want to be part of through real connection, great content, and the right incentives.",
+      "Real communities live inside real software. We build private member platforms with feeds, DMs, events, gamification, and paid memberships, designed around how your audience actually engages — not a generic forum bolted onto your site.",
   },
   {
-    name: "Package Design",
+    name: "Workflow & Internal Tools",
     Icon: PackageIcon,
     description:
-      "Good packaging does more than protect a product — it sells it. We design packaging that gets noticed, tells your brand story at a glance, and makes people feel something the moment they see it.",
+      "Custom dashboards, CRMs, and admin tools that let you run the business without an engineer on call. We build the quiet software underneath the brand that makes everything else easier to operate.",
   },
 ];
 
