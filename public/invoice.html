@@ -146,6 +146,13 @@
   }
   legend + label { margin-top: 0; }
 
+  label .optional {
+    color: #6B6B62;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
   input, textarea, select {
     width: 100%;
     background: #1C1C1C;
@@ -433,6 +440,8 @@
       <input id="invoiceDate" type="date">
       <label>Project</label>
       <input id="project" placeholder="e.g. Prep On Call Rebuild">
+      <label>Period <span class="optional">(optional)</span></label>
+      <input id="period" placeholder="e.g. Platform Launch">
     </fieldset>
 
     <fieldset>
@@ -511,6 +520,7 @@
         <div class="meta-box">
           <div><span class="k">Invoice date:</span> <b id="prev-invoiceDate"></b></div>
           <div><span class="k">Project:</span> <b id="prev-project"></b></div>
+          <div id="prev-periodRow"><span class="k">Period:</span> <b id="prev-period"></b></div>
         </div>
       </div>
 
@@ -617,6 +627,7 @@
     invoiceNumber: "",
     invoiceDate: new Date().toISOString().slice(0, 10),
     project: "",
+    period: "",
     fromName: "BLNT Creatives LLC",
     fromCompany: "Sean & Jen Ballent",
     fromEmail: "sean@blntcreatives.com",
@@ -714,7 +725,7 @@
 
   /* ── Build the editable form fields (once) ─────────────── */
   const simpleFields = [
-    "invoiceNumber", "invoiceDate", "project",
+    "invoiceNumber", "invoiceDate", "project", "period",
     "fromName", "fromCompany", "fromEmail",
     "toName", "toCompany", "toEmail",
     "paymentInstructions", "footerNote"
@@ -947,6 +958,8 @@
     document.getElementById("prev-toEmail").textContent = state.toEmail;
     document.getElementById("prev-invoiceDate").textContent = formatDate(state.invoiceDate);
     document.getElementById("prev-project").textContent = state.project;
+    document.getElementById("prev-period").textContent = state.period;
+    document.getElementById("prev-periodRow").style.display = state.period ? "" : "none";
 
     const tbody = document.getElementById("prev-lineItems");
     tbody.innerHTML = "";
