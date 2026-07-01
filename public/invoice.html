@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLNT Creatives — Invoice Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #141414;
+    --ink-deep: #0D0D0D;
+    --accent: #E8402A;
+    --gray-50: #F7F6F3;
+    --gray-100: #F0EEEA;
+    --gray-200: #E5E2DC;
+    --gray-400: #A6A29A;
+    --gray-600: #5C5952;
+    --gray-900: #1A1A1A;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: #0D0D0D;
+    color: #F5F5F0;
+  }
+
+  .app {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── Form panel ─────────────────────────────────────────── */
+  .form-panel {
+    width: 400px;
+    flex-shrink: 0;
+    background: #141414;
+    border-right: 1px solid rgba(255,255,255,0.08);
+    padding: 28px 24px 80px;
+    overflow-y: auto;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+  }
+
+  .form-panel h1 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 8px;
+  }
+
+  .sync-status {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    color: #9A9A92;
+    margin: 0 0 22px;
+    flex-wrap: wrap;
+  }
+
+  .sync-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #6B6B62;
+    flex-shrink: 0;
+  }
+  .sync-dot.connected { background: #3D9C82; }
+  .sync-dot.offline { background: #E8A020; }
+
+  .link-btn {
+    background: none;
+    border: none;
+    color: var(--accent);
+    padding: 0;
+    font-size: 11px;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  button {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    padding: 10px 16px;
+    transition: opacity 0.15s ease;
+  }
+  button:hover { opacity: 0.85; }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  #downloadBtn {
+    flex: 1;
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .secondary {
+    background: rgba(255,255,255,0.06);
+    color: #F5F5F0;
+    border: 1px solid rgba(255,255,255,0.12);
+  }
+
+  button.small {
+    padding: 8px 12px;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  fieldset {
+    border: none;
+    padding: 0;
+    margin: 0 0 26px;
+  }
+
+  fieldset legend {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    padding: 0;
+    margin-bottom: 12px;
+  }
+
+  label {
+    display: block;
+    font-size: 12px;
+    color: #9A9A92;
+    margin-bottom: 4px;
+    margin-top: 12px;
+  }
+  legend + label { margin-top: 0; }
+
+  input, textarea, select {
+    width: 100%;
+    background: #1C1C1C;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    color: #F5F5F0;
+    font-family: inherit;
+    font-size: 13px;
+    padding: 8px 10px;
+    resize: vertical;
+  }
+  input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .client-toolbar {
+    display: flex;
+    gap: 8px;
+  }
+  .client-toolbar select {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .line-item-row {
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 10px;
+    background: rgba(255,255,255,0.02);
+  }
+
+  .line-item-row-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .line-item-row-header span {
+    font-size: 11px;
+    color: #6B6B62;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .remove-btn {
+    background: none;
+    border: none;
+    color: #9A9A92;
+    font-size: 12px;
+    padding: 2px 6px;
+    text-decoration: underline;
+  }
+  .remove-btn:hover { color: var(--accent); opacity: 1; }
+
+  #addLineItem {
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  .hint {
+    font-size: 11px;
+    color: #6B6B62;
+    margin-top: 6px;
+    line-height: 1.4;
+  }
+
+  /* ── Preview panel ──────────────────────────────────────── */
+  .preview-wrap {
+    flex: 1;
+    padding: 48px 24px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow-x: auto;
+  }
+
+  .invoice {
+    width: 816px;
+    flex-shrink: 0;
+    background: #fff;
+    color: var(--gray-900);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px -12px rgba(0,0,0,0.55);
+  }
+
+  .invoice-header {
+    background: var(--ink);
+    color: #F5F5F0;
+    padding: 40px 52px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .brand {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .brand-url {
+    font-size: 13px;
+    color: var(--accent);
+    margin-top: 4px;
+  }
+
+  .invoice-title {
+    text-align: right;
+  }
+
+  .invoice-title .label {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+
+  .invoice-title .num {
+    font-size: 14px;
+    color: var(--accent);
+    margin-top: 6px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .invoice-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr 220px;
+    gap: 24px;
+    padding: 36px 52px 8px;
+  }
+
+  .meta-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .meta-name {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+
+  .meta-sub {
+    font-size: 13px;
+    color: var(--gray-600);
+    line-height: 1.5;
+    white-space: pre-line;
+  }
+
+  .meta-box {
+    background: var(--gray-50);
+    border-radius: 8px;
+    padding: 16px 18px;
+    font-size: 13px;
+    line-height: 2;
+  }
+
+  .meta-box b { color: var(--gray-900); }
+  .meta-box .k { color: var(--gray-600); font-weight: 600; }
+
+  table.invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 28px;
+  }
+
+  .invoice-table thead th {
+    background: var(--ink);
+    color: #F5F5F0;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 14px 52px;
+  }
+  .invoice-table thead th.amount-col { text-align: right; }
+
+  .invoice-table td {
+    padding: 22px 52px;
+    vertical-align: top;
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  .item-title {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.005em;
+    margin-bottom: 6px;
+  }
+
+  .item-desc {
+    font-size: 13px;
+    color: var(--gray-600);
+    line-height: 1.6;
+    white-space: pre-line;
+  }
+
+  .amount-col {
+    text-align: right;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  tr.subtotal-row td, tr.total-row td {
+    background: var(--gray-50);
+    padding: 14px 52px;
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  tr.total-row td {
+    font-weight: 700;
+    font-size: 15px;
+    border-top: 1px solid var(--gray-200);
+  }
+
+  tr.total-row .amount-col {
+    color: var(--accent);
+    font-size: 19px;
+    letter-spacing: -0.01em;
+  }
+
+  .payment-box {
+    margin: 32px 52px;
+    background: var(--gray-50);
+    border-radius: 8px;
+    padding: 20px 24px;
+  }
+
+  .payment-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .payment-body {
+    font-size: 13px;
+    color: var(--gray-600);
+    line-height: 1.7;
+    white-space: pre-line;
+  }
+
+  .invoice-footer {
+    border-top: 1px solid var(--gray-200);
+    text-align: center;
+    font-size: 12px;
+    color: var(--gray-400);
+    padding: 24px 52px 40px;
+    letter-spacing: 0.01em;
+    white-space: pre-line;
+  }
+
+  @media (max-width: 900px) {
+    .app { flex-direction: column; }
+    .form-panel { width: 100%; height: auto; position: static; }
+    .preview-wrap { padding: 24px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <aside class="form-panel">
+    <h1>Invoice Generator</h1>
+    <p class="sync-status" id="syncStatus">
+      <span id="syncDot" class="sync-dot"></span>
+      <span id="syncLabel">Shared list: not set up</span>
+      <button type="button" id="syncBtn" class="link-btn">Connect shared list</button>
+    </p>
+
+    <div class="actions">
+      <button id="downloadBtn">Download PDF</button>
+      <button id="resetBtn" class="secondary">New</button>
+    </div>
+
+    <fieldset>
+      <legend>Invoice Details</legend>
+      <label>Invoice #</label>
+      <input id="invoiceNumber" placeholder="e.g. POC-008">
+      <label>Invoice Date</label>
+      <input id="invoiceDate" type="date">
+      <label>Project</label>
+      <input id="project" placeholder="e.g. Prep On Call Rebuild">
+      <label>Period</label>
+      <input id="period" placeholder="e.g. Platform Launch">
+    </fieldset>
+
+    <fieldset>
+      <legend>From</legend>
+      <label>Business name</label>
+      <input id="fromName">
+      <label>Contact name</label>
+      <input id="fromCompany">
+      <label>Email</label>
+      <input id="fromEmail">
+    </fieldset>
+
+    <fieldset>
+      <legend>Billed To</legend>
+      <label>Saved Clients</label>
+      <div class="client-toolbar">
+        <select id="savedClientSelect"></select>
+        <button id="saveClientBtn" type="button" class="secondary small">Save</button>
+        <button id="deleteClientBtn" type="button" class="secondary small" disabled>Delete</button>
+      </div>
+      <p class="hint">Pick a saved client to autofill, or fill in the fields below and hit Save to store them for next time.</p>
+      <label>Name</label>
+      <input id="toName" placeholder="Client name">
+      <label>Company</label>
+      <textarea id="toCompany" rows="2" placeholder="Company / DBA (one per line)"></textarea>
+      <label>Email</label>
+      <input id="toEmail" placeholder="client@email.com">
+    </fieldset>
+
+    <fieldset>
+      <legend>Line Items</legend>
+      <div id="lineItems"></div>
+      <button id="addLineItem" class="secondary">+ Add Line Item</button>
+      <p class="hint">First line of the description becomes the bold item title. Add a line break, then the rest becomes the description paragraph.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Payment Instructions</legend>
+      <textarea id="paymentInstructions" rows="4"></textarea>
+      <p class="hint">Use <code>{number}</code> anywhere and it'll be swapped for the invoice # above.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Footer Note</legend>
+      <textarea id="footerNote" rows="2"></textarea>
+    </fieldset>
+  </aside>
+
+  <main class="preview-wrap">
+    <div class="invoice" id="invoice-preview">
+
+      <div class="invoice-header">
+        <div>
+          <div class="brand">BLNT Creatives</div>
+          <div class="brand-url">blntcreatives.com</div>
+        </div>
+        <div class="invoice-title">
+          <div class="label">INVOICE</div>
+          <div class="num" id="prev-invoiceNumber">#POC-007</div>
+        </div>
+      </div>
+
+      <div class="invoice-meta">
+        <div>
+          <div class="meta-label">FROM</div>
+          <div class="meta-name" id="prev-fromName"></div>
+          <div class="meta-sub" id="prev-fromCompany"></div>
+          <div class="meta-sub" id="prev-fromEmail"></div>
+        </div>
+        <div>
+          <div class="meta-label">BILLED TO</div>
+          <div class="meta-name" id="prev-toName"></div>
+          <div class="meta-sub" id="prev-toCompany"></div>
+          <div class="meta-sub" id="prev-toEmail"></div>
+        </div>
+        <div class="meta-box">
+          <div><span class="k">Invoice date:</span> <b id="prev-invoiceDate"></b></div>
+          <div><span class="k">Project:</span> <b id="prev-project"></b></div>
+          <div><span class="k">Period:</span> <b id="prev-period"></b></div>
+        </div>
+      </div>
+
+      <table class="invoice-table">
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th class="amount-col">Amount</th>
+          </tr>
+        </thead>
+        <tbody id="prev-lineItems"></tbody>
+        <tr class="subtotal-row">
+          <td>Subtotal</td>
+          <td class="amount-col" id="prev-subtotal"></td>
+        </tr>
+        <tr class="total-row">
+          <td>Total Due</td>
+          <td class="amount-col" id="prev-total"></td>
+        </tr>
+      </table>
+
+      <div class="payment-box">
+        <div class="payment-title">Payment instructions</div>
+        <div class="payment-body" id="prev-paymentInstructions"></div>
+      </div>
+
+      <div class="invoice-footer" id="prev-footerNote"></div>
+
+    </div>
+  </main>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+  const STORAGE_KEY = "blnt-invoice-draft";
+  const CLIENTS_KEY = "blnt-invoice-clients";
+
+  /* ── Shared list sync (Google Apps Script) ───────────────── */
+  const SYNC_URL_KEY = "blnt-sync-url";
+  const SYNC_TOKEN = "blnt-6f3a9c2e"; // must match TOKEN in google-apps-script.gs
+  let syncUrl = localStorage.getItem(SYNC_URL_KEY) || "";
+
+  const isSynced = () => !!syncUrl;
+
+  async function apiCall(params) {
+    const url = new URL(syncUrl);
+    url.searchParams.set("token", SYNC_TOKEN);
+    Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v ?? ""));
+    const res = await fetch(url.toString(), { method: "GET", redirect: "follow" });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || "sync error");
+    return data;
+  }
+
+  function setSyncStatus(status) {
+    const dot = document.getElementById("syncDot");
+    const label = document.getElementById("syncLabel");
+    const btn = document.getElementById("syncBtn");
+    dot.className = "sync-dot";
+    if (status === "connected") {
+      dot.classList.add("connected");
+      label.textContent = "Shared list: connected";
+      btn.textContent = "Change";
+    } else if (status === "syncing") {
+      dot.classList.add("connected");
+      label.textContent = "Shared list: syncing…";
+      btn.textContent = "Change";
+    } else if (status === "offline") {
+      dot.classList.add("offline");
+      label.textContent = "Shared list: offline (using local copy)";
+      btn.textContent = "Change";
+    } else {
+      label.textContent = "Shared list: not set up";
+      btn.textContent = "Connect shared list";
+    }
+  }
+
+  async function refreshFromRemote() {
+    if (!isSynced()) { setSyncStatus("not-set"); return; }
+    setSyncStatus("syncing");
+    try {
+      const data = await apiCall({ action: "list" });
+      clients = data.clients || [];
+      saveClients(clients);
+      if (!selectedClientId || !clients.find((c) => c.id === selectedClientId)) {
+        selectedClientId = findMatchingClientId();
+      }
+      renderClientSelect();
+      updateClientButtons();
+      setSyncStatus("connected");
+    } catch {
+      setSyncStatus("offline");
+    }
+  }
+
+  // The last-used invoice number lives under last_invoice_number (sheet) or the
+  // older lastInvoiceNumber (local cache) — read whichever is present.
+  const clientLastNumber = (c) =>
+    c ? (c.last_invoice_number ?? c.lastInvoiceNumber ?? null) : null;
+
+  const defaults = {
+    invoiceNumber: "",
+    invoiceDate: new Date().toISOString().slice(0, 10),
+    project: "",
+    period: "",
+    fromName: "BLNT Creatives LLC",
+    fromCompany: "Sean & Jen Ballent",
+    fromEmail: "sean@blntcreatives.com",
+    toName: "",
+    toCompany: "",
+    toEmail: "",
+    lineItems: [{ description: "", amount: "" }],
+    paymentInstructions: "Please remit payment via Zelle to BLNT Creatives at 305.801.9858. Please reference invoice #{number}.",
+    footerNote: "Thank you for your business. Questions? Reach us at sean@blntcreatives.com"
+  };
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return structuredClone(defaults);
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed.lineItems) || parsed.lineItems.length === 0) {
+        parsed.lineItems = structuredClone(defaults.lineItems);
+      }
+      return { ...structuredClone(defaults), ...parsed };
+    } catch {
+      return structuredClone(defaults);
+    }
+  }
+
+  function loadClients() {
+    try {
+      const raw = localStorage.getItem(CLIENTS_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function saveClients(list) {
+    localStorage.setItem(CLIENTS_KEY, JSON.stringify(list));
+  }
+
+  let state = loadState();
+  let clients = loadClients();
+
+  function findMatchingClientId() {
+    const match = clients.find((c) =>
+      (c.name || "") === (state.toName || "") &&
+      (c.company || "") === (state.toCompany || "") &&
+      (c.email || "") === (state.toEmail || "") &&
+      ((c.name || "") || (c.company || ""))
+    );
+    return match ? match.id : "";
+  }
+
+  let selectedClientId = findMatchingClientId();
+
+  function nextInvoiceNumberFrom(prev) {
+    if (!prev) return "";
+    const match = prev.match(/^(.*?)(\d+)(\D*)$/);
+    if (!match) return "";
+    const [, prefix, digits, suffix] = match;
+    const incremented = String(parseInt(digits, 10) + 1).padStart(digits.length, "0");
+    return `${prefix}${incremented}${suffix}`;
+  }
+
+  function suggestedNumberFor(client) {
+    return nextInvoiceNumberFrom(clientLastNumber(client));
+  }
+
+  if (!state.invoiceNumber) {
+    const initialClient = clients.find((c) => c.id === selectedClientId);
+    const suggestion = suggestedNumberFor(initialClient);
+    if (suggestion) state.invoiceNumber = suggestion;
+  }
+
+  function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function formatCurrency(value) {
+    const n = parseFloat(value);
+    if (isNaN(n)) return "$0.00";
+    return n.toLocaleString("en-US", { style: "currency", currency: "USD" });
+  }
+
+  function formatDate(value) {
+    if (!value) return "";
+    const [y, m, d] = value.split("-").map(Number);
+    if (!y || !m || !d) return "";
+    const date = new Date(y, m - 1, d);
+    return date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  }
+
+  function subtotal() {
+    return state.lineItems.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+  }
+
+  /* ── Build the editable form fields (once) ─────────────── */
+  const simpleFields = [
+    "invoiceNumber", "invoiceDate", "project", "period",
+    "fromName", "fromCompany", "fromEmail",
+    "toName", "toCompany", "toEmail",
+    "paymentInstructions", "footerNote"
+  ];
+
+  simpleFields.forEach((key) => {
+    const el = document.getElementById(key);
+    el.value = state[key];
+    el.addEventListener("input", () => {
+      state[key] = el.value;
+      saveState();
+      render();
+    });
+  });
+
+  const lineItemsContainer = document.getElementById("lineItems");
+
+  function renderLineItemForm() {
+    lineItemsContainer.innerHTML = "";
+    state.lineItems.forEach((item, idx) => {
+      const row = document.createElement("div");
+      row.className = "line-item-row";
+      row.innerHTML = `
+        <div class="line-item-row-header">
+          <span>Item ${idx + 1}</span>
+          <button class="remove-btn" type="button">Remove</button>
+        </div>
+        <label>Description</label>
+        <textarea rows="3" class="li-desc"></textarea>
+        <label>Amount ($)</label>
+        <input type="number" step="0.01" min="0" class="li-amount">
+      `;
+      const descEl = row.querySelector(".li-desc");
+      const amountEl = row.querySelector(".li-amount");
+      descEl.value = item.description;
+      amountEl.value = item.amount;
+
+      descEl.addEventListener("input", () => {
+        state.lineItems[idx].description = descEl.value;
+        saveState();
+        render();
+      });
+      amountEl.addEventListener("input", () => {
+        state.lineItems[idx].amount = amountEl.value;
+        saveState();
+        render();
+      });
+      row.querySelector(".remove-btn").addEventListener("click", () => {
+        if (state.lineItems.length === 1) return;
+        state.lineItems.splice(idx, 1);
+        saveState();
+        renderLineItemForm();
+        render();
+      });
+
+      lineItemsContainer.appendChild(row);
+    });
+  }
+
+  document.getElementById("addLineItem").addEventListener("click", () => {
+    state.lineItems.push({ description: "", amount: "" });
+    saveState();
+    renderLineItemForm();
+    render();
+  });
+
+  document.getElementById("resetBtn").addEventListener("click", () => {
+    if (!confirm("Start a new invoice? This clears the current draft.")) return;
+    state = structuredClone(defaults);
+    simpleFields.forEach((key) => { document.getElementById(key).value = state[key]; });
+    selectedClientId = "";
+    saveState();
+    renderLineItemForm();
+    renderClientSelect();
+    updateClientButtons();
+    render();
+  });
+
+  /* ── Saved clients ───────────────────────────────────────── */
+  function clearBilledToFields() {
+    state.toName = "";
+    state.toCompany = "";
+    state.toEmail = "";
+    document.getElementById("toName").value = "";
+    document.getElementById("toCompany").value = "";
+    document.getElementById("toEmail").value = "";
+    saveState();
+    render();
+  }
+
+  function renderClientSelect() {
+    const sel = document.getElementById("savedClientSelect");
+    const current = selectedClientId;
+    sel.innerHTML = "";
+    const defaultOpt = document.createElement("option");
+    defaultOpt.value = "";
+    defaultOpt.textContent = clients.length ? "— New client —" : "No saved clients yet";
+    sel.appendChild(defaultOpt);
+    clients.forEach((c) => {
+      const opt = document.createElement("option");
+      opt.value = c.id;
+      opt.textContent = c.name || c.company || "Unnamed client";
+      sel.appendChild(opt);
+    });
+    sel.value = current;
+  }
+
+  function updateClientButtons() {
+    document.getElementById("deleteClientBtn").disabled = !selectedClientId;
+  }
+
+  document.getElementById("savedClientSelect").addEventListener("change", (e) => {
+    selectedClientId = e.target.value;
+    if (selectedClientId) {
+      const client = clients.find((c) => c.id === selectedClientId);
+      if (client) {
+        state.toName = client.name || "";
+        state.toCompany = client.company || "";
+        state.toEmail = client.email || "";
+        document.getElementById("toName").value = state.toName;
+        document.getElementById("toCompany").value = state.toCompany;
+        document.getElementById("toEmail").value = state.toEmail;
+        const suggestion = suggestedNumberFor(client);
+        if (suggestion) {
+          state.invoiceNumber = suggestion;
+          document.getElementById("invoiceNumber").value = suggestion;
+        }
+        saveState();
+        render();
+      }
+    } else {
+      clearBilledToFields();
+    }
+    updateClientButtons();
+  });
+
+  function saveClientLocal(name, company, email) {
+    if (selectedClientId) {
+      const client = clients.find((c) => c.id === selectedClientId);
+      if (client) {
+        client.name = name;
+        client.company = company;
+        client.email = email;
+      }
+    } else {
+      const id = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      clients.push({ id, name, company, email });
+      selectedClientId = id;
+    }
+    saveClients(clients);
+    renderClientSelect();
+    updateClientButtons();
+  }
+
+  document.getElementById("saveClientBtn").addEventListener("click", async () => {
+    const name = state.toName.trim();
+    const company = state.toCompany.trim();
+    const email = state.toEmail.trim();
+    if (!name && !company) {
+      alert("Add a client name or company before saving.");
+      return;
+    }
+    if (isSynced()) {
+      setSyncStatus("syncing");
+      try {
+        const data = await apiCall({ action: "save", id: selectedClientId || "", name, company, email });
+        selectedClientId = data.client.id;
+        await refreshFromRemote();
+      } catch {
+        setSyncStatus("offline");
+        saveClientLocal(name, company, email);
+      }
+    } else {
+      saveClientLocal(name, company, email);
+    }
+  });
+
+  document.getElementById("deleteClientBtn").addEventListener("click", async () => {
+    if (!selectedClientId) return;
+    const client = clients.find((c) => c.id === selectedClientId);
+    if (!client) return;
+    if (!confirm(`Delete saved client "${client.name || client.company || "this client"}"? This can't be undone.`)) return;
+    const idToDelete = selectedClientId;
+    if (isSynced()) {
+      setSyncStatus("syncing");
+      try {
+        await apiCall({ action: "delete", id: idToDelete });
+        selectedClientId = "";
+        clearBilledToFields();
+        await refreshFromRemote();
+        return;
+      } catch {
+        setSyncStatus("offline");
+      }
+    }
+    clients = clients.filter((c) => c.id !== idToDelete);
+    saveClients(clients);
+    selectedClientId = "";
+    clearBilledToFields();
+    renderClientSelect();
+    updateClientButtons();
+  });
+
+  document.getElementById("syncBtn").addEventListener("click", async () => {
+    const input = prompt(
+      "Paste the Web app URL from your Google Apps Script deployment (ends in /exec).\n\nLeave blank and press OK to disconnect.",
+      syncUrl
+    );
+    if (input === null) return;
+    const trimmed = input.trim();
+    if (!trimmed) {
+      syncUrl = "";
+      localStorage.removeItem(SYNC_URL_KEY);
+      setSyncStatus("not-set");
+      return;
+    }
+    syncUrl = trimmed;
+    localStorage.setItem(SYNC_URL_KEY, trimmed);
+    await refreshFromRemote();
+  });
+
+  /* ── Render the invoice preview ─────────────────────────── */
+  function render() {
+    document.getElementById("prev-invoiceNumber").textContent = "#" + (state.invoiceNumber || "—");
+    document.getElementById("prev-fromName").textContent = state.fromName;
+    document.getElementById("prev-fromCompany").textContent = state.fromCompany;
+    document.getElementById("prev-fromEmail").textContent = state.fromEmail;
+    document.getElementById("prev-toName").textContent = state.toName;
+    document.getElementById("prev-toCompany").textContent = state.toCompany;
+    document.getElementById("prev-toEmail").textContent = state.toEmail;
+    document.getElementById("prev-invoiceDate").textContent = formatDate(state.invoiceDate);
+    document.getElementById("prev-project").textContent = state.project;
+    document.getElementById("prev-period").textContent = state.period;
+
+    const tbody = document.getElementById("prev-lineItems");
+    tbody.innerHTML = "";
+    state.lineItems.forEach((item) => {
+      const desc = item.description || "";
+      const idx = desc.indexOf("\n");
+      const title = idx === -1 ? desc : desc.slice(0, idx);
+      const body = idx === -1 ? "" : desc.slice(idx + 1);
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>
+          <div class="item-title"></div>
+          <div class="item-desc"></div>
+        </td>
+        <td class="amount-col"></td>
+      `;
+      tr.querySelector(".item-title").textContent = title;
+      tr.querySelector(".item-desc").textContent = body;
+      tr.querySelector(".amount-col").textContent = formatCurrency(item.amount);
+      tbody.appendChild(tr);
+    });
+
+    const sub = subtotal();
+    document.getElementById("prev-subtotal").textContent = formatCurrency(sub);
+    document.getElementById("prev-total").textContent = formatCurrency(sub);
+
+    const numberForDisplay = state.invoiceNumber || "—";
+    document.getElementById("prev-paymentInstructions").textContent =
+      (state.paymentInstructions || "").replaceAll("{number}", numberForDisplay);
+    document.getElementById("prev-footerNote").textContent = state.footerNote;
+  }
+
+  /* ── PDF export ──────────────────────────────────────────── */
+  document.getElementById("downloadBtn").addEventListener("click", async () => {
+    const btn = document.getElementById("downloadBtn");
+    btn.disabled = true;
+    btn.textContent = "Generating…";
+    try {
+      const el = document.getElementById("invoice-preview");
+      const canvas = await html2canvas(el, { scale: 2, backgroundColor: "#ffffff", useCORS: true });
+      const imgData = canvas.toDataURL("image/png");
+
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF("p", "pt", "letter");
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = pageWidth;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      let heightLeft = imgHeight;
+      let position = 0;
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      const filename = (state.invoiceNumber ? state.invoiceNumber : "invoice").replace(/\s+/g, "-");
+      pdf.save(`${filename}.pdf`);
+
+      if (selectedClientId && state.invoiceNumber) {
+        const client = clients.find((c) => c.id === selectedClientId);
+        if (client) {
+          client.last_invoice_number = state.invoiceNumber;
+          saveClients(clients);
+        }
+        if (isSynced()) {
+          apiCall({ action: "recordNumber", id: selectedClientId, number: state.invoiceNumber })
+            .then(() => refreshFromRemote())
+            .catch(() => setSyncStatus("offline"));
+        }
+      }
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Download PDF";
+    }
+  });
+
+  renderLineItemForm();
+  renderClientSelect();
+  updateClientButtons();
+  render();
+
+  // Pull the shared client list on load (falls back to the local cache if offline).
+  setSyncStatus(isSynced() ? "syncing" : "not-set");
+  refreshFromRemote();
+</script>
+
+</body>
+</html>
