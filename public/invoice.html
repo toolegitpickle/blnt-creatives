@@ -229,8 +229,6 @@
     flex-shrink: 0;
     background: #fff;
     color: var(--gray-900);
-    border-radius: 12px;
-    overflow: hidden;
     box-shadow: 0 24px 60px -12px rgba(0,0,0,0.55);
   }
 
@@ -303,7 +301,6 @@
 
   .meta-box {
     background: var(--gray-50);
-    border-radius: 8px;
     padding: 16px 18px;
     font-size: 13px;
     line-height: 2;
@@ -378,7 +375,6 @@
   .payment-box {
     margin: 32px 52px;
     background: var(--gray-50);
-    border-radius: 8px;
     padding: 20px 24px;
   }
 
@@ -437,8 +433,6 @@
       <input id="invoiceDate" type="date">
       <label>Project</label>
       <input id="project" placeholder="e.g. Prep On Call Rebuild">
-      <label>Period</label>
-      <input id="period" placeholder="e.g. Platform Launch">
     </fieldset>
 
     <fieldset>
@@ -517,7 +511,6 @@
         <div class="meta-box">
           <div><span class="k">Invoice date:</span> <b id="prev-invoiceDate"></b></div>
           <div><span class="k">Project:</span> <b id="prev-project"></b></div>
-          <div><span class="k">Period:</span> <b id="prev-period"></b></div>
         </div>
       </div>
 
@@ -624,7 +617,6 @@
     invoiceNumber: "",
     invoiceDate: new Date().toISOString().slice(0, 10),
     project: "",
-    period: "",
     fromName: "BLNT Creatives LLC",
     fromCompany: "Sean & Jen Ballent",
     fromEmail: "sean@blntcreatives.com",
@@ -722,7 +714,7 @@
 
   /* ── Build the editable form fields (once) ─────────────── */
   const simpleFields = [
-    "invoiceNumber", "invoiceDate", "project", "period",
+    "invoiceNumber", "invoiceDate", "project",
     "fromName", "fromCompany", "fromEmail",
     "toName", "toCompany", "toEmail",
     "paymentInstructions", "footerNote"
@@ -955,7 +947,6 @@
     document.getElementById("prev-toEmail").textContent = state.toEmail;
     document.getElementById("prev-invoiceDate").textContent = formatDate(state.invoiceDate);
     document.getElementById("prev-project").textContent = state.project;
-    document.getElementById("prev-period").textContent = state.period;
 
     const tbody = document.getElementById("prev-lineItems");
     tbody.innerHTML = "";
