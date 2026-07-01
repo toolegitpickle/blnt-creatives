@@ -988,10 +988,11 @@
     try {
       const el = document.getElementById("invoice-preview");
       const canvas = await html2canvas(el, { scale: 2, backgroundColor: "#ffffff", useCORS: true });
-      const imgData = canvas.toDataURL("image/png");
+      // JPEG keeps the file small (a PNG of a full page runs ~10MB; JPEG ~200KB) with no visible loss for text.
+      const imgData = canvas.toDataURL("image/jpeg", 0.92);
 
       const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF("p", "pt", "letter");
+      const pdf = new jsPDF({ orientation: "p", unit: "pt", format: "letter", compress: true });
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
       const imgWidth = pageWidth;
@@ -999,13 +1000,13 @@
 
       let heightLeft = imgHeight;
       let position = 0;
-      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
       heightLeft -= pageHeight;
 
       while (heightLeft > 0) {
         position = heightLeft - imgHeight;
         pdf.addPage();
-        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+        pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
         heightLeft -= pageHeight;
       }
 
